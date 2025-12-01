@@ -73,7 +73,7 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({
       {description && (
         <p
           className={cn(
-            "mx-auto max-w-3xl text-center text-medium md:text-lg",
+            "mx-auto max-w-3xl text-center font-normal md:text-lg",
             isDark ? "text-zinc-500" : "text-zinc-600",
             descriptionClassName
           )}

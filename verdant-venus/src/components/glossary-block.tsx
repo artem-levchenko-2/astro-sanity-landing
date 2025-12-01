@@ -6,8 +6,103 @@ import { LabelIcon } from "@/components/ui/label-icon";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { byPrefixAndName } from '@awesome.me/kit-c9f3baaeec/icons';
 
+interface GlossaryIcon {
+  iconName: string;
+  iconPrefix?: 'fas' | 'far' | 'fal' | 'fad' | 'fab';
+}
 
-const GlossaryBlock = () => {
+interface GlossaryTextPart {
+  text: string;
+  icon?: GlossaryIcon;
+}
+
+interface GlossaryBlockProps {
+  label?: {
+    text: string;
+    iconName: string;
+    iconPrefix?: 'fas' | 'far' | 'fal' | 'fad' | 'fab';
+  };
+  heading?: {
+    prefix: string;
+    main: string;
+  };
+  description?: {
+    parts: GlossaryTextPart[];
+  };
+}
+
+// Функція для отримання іконки за назвою
+const getIcon = (iconName: string, iconPrefix: string = 'fas') => {
+  try {
+    const prefixMap: Record<string, any> = {
+      'fas': byPrefixAndName.fas,
+      'far': byPrefixAndName.far,
+      'fal': byPrefixAndName.fal,
+      'fad': byPrefixAndName.fad,
+      'fab': byPrefixAndName.fab,
+    };
+    
+    const iconSet = prefixMap[iconPrefix];
+    if (iconSet && iconSet[iconName]) {
+      return iconSet[iconName];
+    }
+    
+    // Fallback
+    return byPrefixAndName.fas[iconName] || byPrefixAndName.far[iconName];
+  } catch (error) {
+    console.warn(`GlossaryBlock icon not found: ${iconPrefix}/${iconName}`);
+    return null;
+  }
+};
+
+const GlossaryBlock = ({
+  label = {
+    text: "Glossary",
+    iconName: "book-font",
+    iconPrefix: "fas",
+  },
+  heading = {
+    prefix: "But what are",
+    main: "routing and cascading?",
+  },
+  description = {
+    parts: [
+      { text: "Payment & payout routing selects the best provider path for each transaction using rules you define: " },
+      { text: "conditions pinpoint the payments in scope, ", icon: { iconName: "filter", iconPrefix: "far" } },
+      { text: "action decides how to distribute, ", icon: { iconName: "lightbulb-on", iconPrefix: "far" } },
+      { text: "and ", icon: { iconName: "building-columns", iconPrefix: "far" } },
+      { text: "routes specify where to send them." },
+    ],
+  },
+}: GlossaryBlockProps) => {
+  const labelIcon = getIcon(label.iconName, label.iconPrefix || "fas");
+  
+  // Рендеримо опис з частинами тексту та іконками
+  const renderDescription = () => {
+    if (!description.parts || description.parts.length === 0) {
+      return null;
+    }
+
+    return (
+      <>
+        {description.parts.map((part, index) => {
+          const iconComponent = part.icon ? getIcon(part.icon.iconName, part.icon.iconPrefix || "far") : null;
+          return (
+            <span key={index}>
+              {iconComponent && (
+                <FontAwesomeIcon 
+                  icon={iconComponent} 
+                  className="text-md ml-1 mr-1 text-primary" 
+                />
+              )}
+              {part.text}
+            </span>
+          );
+        })}
+      </>
+    );
+  };
+
   return (
     <section className="py-8">
        <motion.section
@@ -19,24 +114,20 @@ const GlossaryBlock = () => {
       <div className="container">
         <div className="flex flex-col md:flex-row gap-10">
           <div className="flex flex-col gap-4 md:w-1/3">
-            <LabelIcon icon={<FontAwesomeIcon icon={byPrefixAndName.fas['book-font']} className="text-md text-amber-500"/>}>
-              Glossary
-            </LabelIcon>
+            {labelIcon && (
+              <LabelIcon icon={<FontAwesomeIcon icon={labelIcon} className="text-md text-amber-500"/>}>
+                {label.text}
+              </LabelIcon>
+            )}
             <h2 className="text-3xl font-semibold">
-              <span className="text-zinc-500">But what are</span>
+              <span className="text-zinc-500">{heading.prefix}</span>
               <br />
-              routing and cascading?
+              {heading.main}
             </h2>
           </div>
           <div className="md:w-2/3">
-            <p className="text-zinc-700 mx-auto max-w-3xl text-medium md:text-xl md:mt-8">
-            Payment & payout routing selects the best provider path for each transaction using rules you define:  
-            <FontAwesomeIcon icon={byPrefixAndName.far['filter']} className="text-md ml-1 mr-1 text-primary"  /> 
-             conditions pinpoint the payments in scope,  
-            <FontAwesomeIcon icon={byPrefixAndName.far['lightbulb-on']} className="text-md ml-1 mr-1 text-primary"/> 
-             action decides how to distribute, and  
-            <FontAwesomeIcon icon={byPrefixAndName.far['building-columns']} className="text-md ml-1 mr-1 text-primary"/> 
-             routes specify where to send them.
+            <p className="text-zinc-700 mx-auto max-w-3xl font-normal md:text-xl md:mt-8">
+              {renderDescription()}
             </p>
           </div>
         </div>

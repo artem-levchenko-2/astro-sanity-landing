@@ -11,104 +11,121 @@ import {
 } from "@/components/ui/carousel";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { byPrefixAndName } from "@awesome.me/kit-c9f3baaeec/icons";
-import { LabelIcon } from "./ui/label-icon";
 import { SectionHeader } from "./section-header";
 import { motion } from "framer-motion";
 
-const features = [
-  {
-    id: "feature-1",
-    title: "Feature 1",
-    description:
-      "Nam vitae molestie arcu. Quisque eu libero orci. Aliquam imperdiet magna nec massa consectetur, id interdum ante congue.",
-    description2:
-      "Suspendisse potenti. Sed vel tortor ut elit efficitur vehicula. Integer nec turpis sed justo aliquet bibendum.",
-    icon: (
-      <FontAwesomeIcon
-        icon={byPrefixAndName.fas["filter"]}
-        className="text-md"
-      />
-    ),
-    image: "/frame-1.svg",
-  },
-  {
-    id: "feature-2",
-    title: "Feature 2",
-    description:
-      "Nam vitae molestie arcu. Quisque eu libero orci. Aliquam imperdiet magna nec massa consectetur, id interdum ante congue.",
-    description2:
-      "Suspendisse potenti. Sed vel tortor ut elit efficitur vehicula. Integer nec turpis sed justo aliquet bibendum.",
-    icon: (
-      <FontAwesomeIcon
-        icon={byPrefixAndName.fas["lightbulb-on"]}
-        className="text-md"
-      />
-    ),
-    image: "/frame-2.svg",
-  },
-  {
-    id: "feature-3",
-    title: "Feature 3",
-    description:
-      "Nam vitae molestie arcu. Quisque eu libero orci. Aliquam imperdiet magna nec massa consectetur, id interdum ante congue.",
-    description2:
-      "Suspendisse potenti. Sed vel tortor ut elit efficitur vehicula. Integer nec turpis sed justo aliquet bibendum.",
-    icon: (
-      <FontAwesomeIcon
-        icon={byPrefixAndName.fas["sparkles"]}
-        className="text-md"
-      />
-    ),
-    image: "/frame-3.svg",
-  },
-  {
-    id: "feature-4",
-    title: "Feature 4",
-    description:
-      "Nam vitae molestie arcu. Quisque eu libero orci. Aliquam imperdiet magna nec massa consectetur, id interdum ante congue.",
-    description2:
-      "Suspendisse potenti. Sed vel tortor ut elit efficitur vehicula. Integer nec turpis sed justo aliquet bibendum.",
-    icon: (
-      <FontAwesomeIcon
-        icon={byPrefixAndName.fas["bolt"]}
-        className="text-md"
-      />
-    ),
-    image: "/frame-3.svg",
-  },
-  {
-    id: "feature-5",
-    title: "Feature 5",
-    description:
-      "Nam vitae molestie arcu. Quisque eu libero orci. Aliquam imperdiet magna nec massa consectetur, id interdum ante congue.",
-    description2:
-      "Suspendisse potenti. Sed vel tortor ut elit efficitur vehicula. Integer nec turpis sed justo aliquet bibendum.",
-    icon: (
-      <FontAwesomeIcon
-        icon={byPrefixAndName.fas["shield"]}
-        className="text-md"
-      />
-    ),
-    image: "/frame-3.svg",
-  },
-  {
-    id: "feature-6",
-    title: "Feature 6",
-    description:
-      "Nam vitae molestie arcu. Quisque eu libero orci. Aliquam imperdiet magna nec massa consectetur, id interdum ante congue.",
-    description2:
-      "Suspendisse potenti. Sed vel tortor ut elit efficitur vehicula. Integer nec turpis sed justo aliquet bibendum.",
-    icon: (
-      <FontAwesomeIcon
-        icon={byPrefixAndName.fas["cube"]}
-        className="text-md"
-      />
-    ),
-    image: "/frame-3.svg",
-  },
-];
+interface ExpandableFeature {
+  id: string;
+  title: string;
+  description: string;
+  description2?: string;
+  iconName: string;
+  iconPrefix?: 'fas' | 'far' | 'fal' | 'fad' | 'fab';
+  image: string;
+}
 
-const FeaturesExpandableBlock = () => {
+interface ExpandableHeader {
+  label: string;
+  iconName: string;
+  iconPrefix?: 'fas' | 'far' | 'fal' | 'fad' | 'fab';
+  title: string;
+  description: string;
+}
+
+interface FeaturesExpandableBlockProps {
+  header?: ExpandableHeader;
+  features?: ExpandableFeature[];
+}
+
+// Функція для отримання іконки за назвою
+const getIcon = (iconName: string, iconPrefix: string = 'fas') => {
+  try {
+    const prefixMap: Record<string, any> = {
+      'fas': byPrefixAndName.fas,
+      'far': byPrefixAndName.far,
+      'fal': byPrefixAndName.fal,
+      'fad': byPrefixAndName.fad,
+      'fab': byPrefixAndName.fab,
+    };
+    
+    const iconSet = prefixMap[iconPrefix];
+    if (iconSet && iconSet[iconName]) {
+      return iconSet[iconName];
+    }
+    
+    // Fallback
+    return byPrefixAndName.fas[iconName] || byPrefixAndName.fad[iconName];
+  } catch (error) {
+    console.warn(`FeaturesExpandableBlock icon not found: ${iconPrefix}/${iconName}`);
+    return null;
+  }
+};
+
+const FeaturesExpandableBlock = ({
+  header = {
+    label: "Actions",
+    iconName: "lightbulb-on",
+    iconPrefix: "fas",
+    title: "Six ways\nto distribute traffic",
+    description: "Pick the behaviour that best fits your goal;\nevery Action is composable and previewable.",
+  },
+  features = [
+    {
+      id: "feature-1",
+      title: "Feature 1",
+      description: "Nam vitae molestie arcu. Quisque eu libero orci. Aliquam imperdiet magna nec massa consectetur, id interdum ante congue.",
+      description2: "Suspendisse potenti. Sed vel tortor ut elit efficitur vehicula. Integer nec turpis sed justo aliquet bibendum.",
+      iconName: "filter",
+      iconPrefix: "fas",
+      image: "/feature-1.svg",
+    },
+    {
+      id: "feature-2",
+      title: "Feature 2",
+      description: "Nam vitae molestie arcu. Quisque eu libero orci. Aliquam imperdiet magna nec massa consectetur, id interdum ante congue.",
+      description2: "Suspendisse potenti. Sed vel tortor ut elit efficitur vehicula. Integer nec turpis sed justo aliquet bibendum.",
+      iconName: "lightbulb-on",
+      iconPrefix: "fas",
+      image: "/feature-1.svg",
+    },
+    {
+      id: "feature-3",
+      title: "Feature 3",
+      description: "Nam vitae molestie arcu. Quisque eu libero orci. Aliquam imperdiet magna nec massa consectetur, id interdum ante congue.",
+      description2: "Suspendisse potenti. Sed vel tortor ut elit efficitur vehicula. Integer nec turpis sed justo aliquet bibendum.",
+      iconName: "sparkles",
+      iconPrefix: "fas",
+      image: "/feature-1.svg",
+    },
+    {
+      id: "feature-4",
+      title: "Feature 4",
+      description: "Nam vitae molestie arcu. Quisque eu libero orci. Aliquam imperdiet magna nec massa consectetur, id interdum ante congue.",
+      description2: "Suspendisse potenti. Sed vel tortor ut elit efficitur vehicula. Integer nec turpis sed justo aliquet bibendum.",
+      iconName: "bolt",
+      iconPrefix: "fas",
+      image: "/feature-1.svg",
+    },
+    {
+      id: "feature-5",
+      title: "Feature 5",
+      description: "Nam vitae molestie arcu. Quisque eu libero orci. Aliquam imperdiet magna nec massa consectetur, id interdum ante congue.",
+      description2: "Suspendisse potenti. Sed vel tortor ut elit efficitur vehicula. Integer nec turpis sed justo aliquet bibendum.",
+      iconName: "shield",
+      iconPrefix: "fas",
+      image: "/feature-1.svg",
+    },
+    {
+      id: "feature-6",
+      title: "Feature 6",
+      description: "Nam vitae molestie arcu. Quisque eu libero orci. Aliquam imperdiet magna nec massa consectetur, id interdum ante congue.",
+      description2: "Suspendisse potenti. Sed vel tortor ut elit efficitur vehicula. Integer nec turpis sed justo aliquet bibendum.",
+      iconName: "cube",
+      iconPrefix: "fas",
+      image: "/feature-1.svg",
+    },
+  ],
+}: FeaturesExpandableBlockProps) => {
   const [selection, setSelection] = useState(0);
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   
@@ -149,22 +166,35 @@ const FeaturesExpandableBlock = () => {
         <SectionHeader
           theme="dark"
           icon={
-            <FontAwesomeIcon
-              icon={byPrefixAndName.fas["lightbulb-on"]}
-              className="text-md text-amber-400"
-            />
+            (() => {
+              const headerIcon = getIcon(header.iconName, header.iconPrefix || "fas");
+              return headerIcon ? (
+                <FontAwesomeIcon
+                  icon={headerIcon}
+                  className="text-md text-amber-400"
+                />
+              ) : null;
+            })()
           }
-          label="Actions"
+          label={header.label}
           title={
             <>
-              Six ways <br />
-              to distribute traffic
+              {header.title.split('\n').map((line, i) => (
+                <span key={i}>
+                  {line}
+                  {i < header.title.split('\n').length - 1 && <br />}
+                </span>
+              ))}
             </>
           }
           description={
             <>
-              Pick the behaviour that best fits your goal; <br />
-              every Action is composable and previewable.
+              {header.description.split('\n').map((line, i) => (
+                <span key={i}>
+                  {line}
+                  {i < header.description.split('\n').length - 1 && <br />}
+                </span>
+              ))}
             </>
           }
         />
@@ -208,12 +238,15 @@ const FeaturesExpandableBlock = () => {
                   >
                     <div className="flex items-center justify-between gap-x-2">
                       <div className="flex items-center gap-3">
-                        {feature.icon && (
-                          <span className="group-data-open:text-amber-400 text-zinc-600 flex items-center justify-center">
-                            {feature.icon}
-                          </span>
-                        )}
-                        <div className="text-primary-foreground text-xl font-semibold">
+                        {(() => {
+                          const featureIcon = getIcon(feature.iconName, feature.iconPrefix || "fas");
+                          return featureIcon ? (
+                            <span className="group-data-open:text-amber-400 text-zinc-600 flex items-center justify-center">
+                              <FontAwesomeIcon icon={featureIcon} className="text-md" />
+                            </span>
+                          ) : null;
+                        })()}
+                        <div className="text-primary-foreground text-xl font-medium">
                           {feature.title}
                         </div>
                       </div>

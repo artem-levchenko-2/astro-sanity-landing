@@ -45,6 +45,59 @@ const landingPageData = await sanityClient.fetch(
       description,
       iconName,
       iconPrefix
+    },
+    glossaryBlockLabel{
+      text,
+      iconName,
+      iconPrefix
+    },
+    glossaryBlockHeading{
+      prefix,
+      main
+    },
+    glossaryBlockDescription[]{
+      text,
+      iconName,
+      iconPrefix
+    },
+    howItWorksBlockHeader{
+      label,
+      iconName,
+      iconPrefix,
+      title,
+      description
+    },
+    howItWorksBlockFeatures[]{
+      id,
+      heading,
+      description,
+      iconName,
+      iconPrefix,
+      image,
+      url,
+      isDefault
+    },
+    additionalFeaturesBlockFeatures[]{
+      title,
+      text,
+      iconName,
+      iconPrefix
+    },
+    featuresExpandableBlockHeader{
+      label,
+      iconName,
+      iconPrefix,
+      title,
+      description
+    },
+    featuresExpandableBlockFeatures[]{
+      id,
+      title,
+      description,
+      description2,
+      iconName,
+      iconPrefix,
+      image
     }
   }`
 );
@@ -95,6 +148,119 @@ const benefitsBlockData =
         iconPrefix: feature.iconPrefix || "fad",
       }))
     : undefined; // Якщо немає даних в Sanity, використовуватимуться значення за замовчуванням з компонента
+
+// Підготовлюємо дані для GlossaryBlock
+const glossaryBlockProps = landingPageData
+  ? {
+      label: landingPageData.glossaryBlockLabel && 
+             landingPageData.glossaryBlockLabel.text && 
+             landingPageData.glossaryBlockLabel.iconName
+        ? {
+            text: landingPageData.glossaryBlockLabel.text,
+            iconName: landingPageData.glossaryBlockLabel.iconName,
+            iconPrefix: landingPageData.glossaryBlockLabel.iconPrefix || "fas",
+          }
+        : undefined,
+      heading: landingPageData.glossaryBlockHeading &&
+               (landingPageData.glossaryBlockHeading.prefix || landingPageData.glossaryBlockHeading.main)
+        ? {
+            prefix: landingPageData.glossaryBlockHeading.prefix || "",
+            main: landingPageData.glossaryBlockHeading.main || "",
+          }
+        : undefined,
+      description: Array.isArray(landingPageData.glossaryBlockDescription) &&
+                   landingPageData.glossaryBlockDescription.length > 0
+        ? {
+            parts: landingPageData.glossaryBlockDescription
+              .filter((part: any) => part && part.text)
+              .map((part: any) => ({
+                text: part.text,
+                icon: part.iconName
+                  ? {
+                      iconName: part.iconName,
+                      iconPrefix: part.iconPrefix || "far",
+                    }
+                  : undefined,
+              })),
+          }
+        : undefined,
+    }
+  : {};
+
+// Підготовлюємо дані для HowItWorksBlock
+const howItWorksBlockProps = landingPageData
+  ? {
+      header: landingPageData.howItWorksBlockHeader &&
+             (landingPageData.howItWorksBlockHeader.label || 
+              landingPageData.howItWorksBlockHeader.title)
+        ? {
+            label: landingPageData.howItWorksBlockHeader.label || "",
+            iconName: landingPageData.howItWorksBlockHeader.iconName || "",
+            iconPrefix: landingPageData.howItWorksBlockHeader.iconPrefix || "fas",
+            title: landingPageData.howItWorksBlockHeader.title || "",
+            description: landingPageData.howItWorksBlockHeader.description || "",
+          }
+        : undefined,
+      features: Array.isArray(landingPageData.howItWorksBlockFeatures) &&
+                landingPageData.howItWorksBlockFeatures.length > 0
+        ? landingPageData.howItWorksBlockFeatures
+            .filter((feature: any) => feature && feature.id && feature.heading)
+            .map((feature: any) => ({
+              id: feature.id,
+              heading: feature.heading,
+              description: feature.description || "",
+              iconName: feature.iconName,
+              iconPrefix: feature.iconPrefix || "fas",
+              image: feature.image || "",
+              url: feature.url || "",
+              isDefault: feature.isDefault || false,
+            }))
+        : undefined,
+    }
+  : {};
+
+// Підготовлюємо дані для AdditionalFeaturesBlock
+const additionalFeaturesBlockData =
+  landingPageData?.additionalFeaturesBlockFeatures &&
+  landingPageData.additionalFeaturesBlockFeatures.length > 0
+    ? landingPageData.additionalFeaturesBlockFeatures.map((feature: any) => ({
+        title: feature.title,
+        text: feature.text,
+        iconName: feature.iconName,
+        iconPrefix: feature.iconPrefix || "fas",
+      }))
+    : undefined;
+
+// Підготовлюємо дані для FeaturesExpandableBlock
+const featuresExpandableBlockProps = landingPageData
+  ? {
+      header: landingPageData.featuresExpandableBlockHeader &&
+             (landingPageData.featuresExpandableBlockHeader.label ||
+              landingPageData.featuresExpandableBlockHeader.title)
+        ? {
+            label: landingPageData.featuresExpandableBlockHeader.label || "",
+            iconName: landingPageData.featuresExpandableBlockHeader.iconName || "",
+            iconPrefix: landingPageData.featuresExpandableBlockHeader.iconPrefix || "fas",
+            title: landingPageData.featuresExpandableBlockHeader.title || "",
+            description: landingPageData.featuresExpandableBlockHeader.description || "",
+          }
+        : undefined,
+      features: Array.isArray(landingPageData.featuresExpandableBlockFeatures) &&
+                landingPageData.featuresExpandableBlockFeatures.length > 0
+        ? landingPageData.featuresExpandableBlockFeatures
+            .filter((feature: any) => feature && feature.id && feature.title)
+            .map((feature: any) => ({
+              id: feature.id,
+              title: feature.title,
+              description: feature.description || "",
+              description2: feature.description2 || undefined,
+              iconName: feature.iconName,
+              iconPrefix: feature.iconPrefix || "fas",
+              image: feature.image || "",
+            }))
+        : undefined,
+    }
+  : {};
 
 const faqItems = [
   {
@@ -159,15 +325,21 @@ const faqItems = [
     </header>
     <main class="pt-[72px]">
       <HeroBlock client:load {...heroProps} />
-      <GlossaryBlock client:load />
+      <GlossaryBlock client:load {...glossaryBlockProps} />
       <BenefitsBlock 
         client:load 
         title={landingPageData?.benefitsBlockTitle}
         features={benefitsBlockData}
       />
-      <HowItWorksBlock client:load />
-      <AdditionalFeaturesBlock client:load />
-      <FeaturesExpandableBlock client:load />
+      <HowItWorksBlock client:load {...howItWorksBlockProps} />
+      <AdditionalFeaturesBlock 
+        client:load 
+        features={additionalFeaturesBlockData}
+      />
+      <FeaturesExpandableBlock 
+        client:load 
+        {...featuresExpandableBlockProps}
+      />
       <Bento2x2Block client:load />
       <BlackCta client:load />
       <AdditionalFeaturesBlock2 client:load />

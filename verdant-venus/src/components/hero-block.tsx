@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { LabelIcon } from "@/components/ui/label-icon";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { byPrefixAndName } from '@awesome.me/kit-c9f3baaeec/icons';
-import { motion } from "framer-motion";
 
 
 type HeroLabel = {
@@ -186,7 +185,7 @@ const HeroBlock = ({
            <FontAwesomeIcon icon={byPrefixAndName.fadr['diagram-subtask']} className="text-3xl md:text-5xl ml-2 mr-1" style={{color: "#55D8A4",}} /> 
            {finalHeadingEnd}
           </h1>
-          <p className="text-zinc-700 mx-auto max-w-3xl text-center text-medium md:text-xl">
+          <p className="text-zinc-700 mx-auto max-w-3xl text-center text-regular md:text-xl">
             {finalSubheading}
           </p>
           <div className="mt-8 flex items-center justify-center gap-3">
